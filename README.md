@@ -12,7 +12,7 @@ This document details the architecture of a simple 8-bit CPU implementation with
 | 2        | CE            | Clock Enable - Enables the system clock |
 | 3        | OI            | Output In - Loads data into the output register |
 | 4        | BI            | B register In - Loads data into the B register |
-| 5        | ΣS            | Sum Select - Selects operation for the ALU |
+| 5        | ΣS            | Sum/Subtract Select - Selects operation for the ALU |
 | 6        | ΣO            | Sum Out - Enables the ALU output onto the bus |
 | 7        | AO            | A register Out - Outputs A register contents to the bus |
 | 8        | AI            | A register In - Loads data from the bus into the A register |
