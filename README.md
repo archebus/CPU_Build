@@ -29,6 +29,7 @@ This document details the architecture of a simple 8-bit CPU implementation with
 | 13       | HLT           | Halt - Stops the CPU clock |
 
 ## Instruction Set
+-> Blank codes have not been confirmed working in Control ROM yet <-
 
 | Opcode | Mnemonic | Description | Step 0 | Step 1 | Step 2 | Step 3 | Step 4 |
 |--------|----------|-------------|-----------------|-----------------|--------|--------|--------|
@@ -36,18 +37,18 @@ This document details the architecture of a simple 8-bit CPU implementation with
 | 0x1    | LDA      | Load from memory to A | IO MI | MO AI | - | MI CO | MO II CE |
 | 0x2    | ADD      | Add memory to A | IO MI | MO BI | ΣO AI | MI CO | MO II CE |
 | 0x3    | OUT      | Output A register | AO OI | - | - | MI CO | MO II CE |
-| 0x4    | JMP      | Jump to address | - | - | - | - | - | !! Not implemented.
-| 0x5    | STA      | Store A to memory | - | - | - | - | - | !! Not implemented.
-| 0x6    | LDI      | Load immediate to A | - | - | - | - | - | !! Not implemented.
-| 0x7    | JC       | Jump if carry | - | - | - | - | - | !! Not implemented.
+| 0x4    | JMP      | Jump to address | - | - | - | - | - |
+| 0x5    | STA      | Store A to memory | - | - | - | - | - |
+| 0x6    | LDI      | Load immediate to A | - | - | - | - | - |
+| 0x7    | JC       | Jump if carry | - | - | - | - | - |
 | 0x8    | HLT      | Halt CPU | HLT | - | - | MI CO | MO II CE |
-| 0x9    | SUB      | Subtract memory from A | - | - | - | - | - | !! Not implemented.
-| 0xA    | AND      | Bitwise AND | - | - | - | - | - | !! Not implemented.
-| 0xB    | OR       | Bitwise OR | - | - | - | - | - | !! Not implemented.
-| 0xC    | XOR      | Bitwise XOR | - | - | - | - | - | !! Not implemented.
-| 0xD    | LDB      | Load from memory to B | - | - | - | - | - | !! Not implemented.
-| 0xE    | STB      | Store B to memory | - | - | - | - | - | !! Not implemented.
-| 0xF    | JNZ      | Jump if not zero | - | - | - | - | - | !! Not implemented.
+| 0x9    | SUB      | Subtract memory from A | - | - | - | - | - |
+| 0xA    | AND      | Bitwise AND | - | - | - | - | - |
+| 0xB    | OR       | Bitwise OR | - | - | - | - | - |
+| 0xC    | XOR      | Bitwise XOR | - | - | - | - | - |
+| 0xD    | LDB      | Load from memory to B | - | - | - | - | - |
+| 0xE    | STB      | Store B to memory | - | - | - | - | - |
+| 0xF    | JNZ      | Jump if not zero | - | - | - | - | - |
 
 ## Instruction Format
 Each instruction is 8 bits wide:
