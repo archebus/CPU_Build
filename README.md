@@ -14,9 +14,9 @@ This document details the architecture of a simple 8-bit CPU implementation with
 | Signal # | Control Signal | Function |
 |----------|---------------|----------|
 | 0        | J             | Jump - Controls program counter jumping |
-| 1        | CO            | Carry Out - Flag indicating a carry from arithmetic operation |
-| 2        | CE            | Clock Enable - Enables the system clock |
-| 3        | OI            | Output In - Loads data into the output register |
+| 1        | CO            | Counter Out - Outputs current program counter step to the bus |
+| 2        | CE            | Counter Enable - Increments the program counter 1 step |
+| 3        | OI            | Output In - Loads data into the output register for panel display  |
 | 4        | BI            | B register In - Loads data into the B register |
 | 5        | ΣS            | Sum/Subtract Select - Selects operation for the ALU |
 | 6        | ΣO            | Sum Out - Enables the ALU output onto the bus |
