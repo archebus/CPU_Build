@@ -99,4 +99,4 @@ The control ROM is organized as an 8×8 grid (64 cells), with control signal pat
 - All jumps update the program counter immediately
 - The ALU operation (addition, subtraction, logic) is determined by the ΣS signal
 - The fetch cycle is common to all instructions
-- The B register is used for both instruction storage and arithmetic operations
+- The B register is only used for ALU operations
