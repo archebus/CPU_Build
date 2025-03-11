@@ -7,7 +7,7 @@ This document details the architecture of a simple 8-bit CPU implementation with
 - A register for general use (A) and a register for ALU operation (B)
 - 64bits of dedicated Memory to store program OPCODES
 - A program counter and simple 5hz clock (configurable)
-- An 3 panel display programmed for decimal, that supports negative numbers
+- A 3 panel display programmed for decimal, that supports negative numbers
 
 ## Control Signals
 
