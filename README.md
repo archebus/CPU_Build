@@ -1,7 +1,13 @@
 # 8-bit CPU Architecture Documentation
 
 ## CPU Overview
-This document details the architecture of a simple 8-bit CPU implementation with a 4-bit address space, supporting 16 distinct instructions. The CPU features a microcoded control unit with a 5-step instruction cycle and various registers for data processing.
+This document details the architecture of a simple 8-bit CPU implementation with a 4-bit address space, supporting 16 distinct instructions. The CPU features 
+- A microcoded control unit with a 5-step instruction cycle
+- An 8 bit ALU with carry, and a substract switch
+- A register for general use (A) and a register for ALU operation (B)
+- 64bits of dedicated Memory to store program OPCODES
+- A program counter and simple 5hz clock (configurable)
+- An 3 panel display programmed for decimal, that supports negative numbers
 
 ## Control Signals
 
