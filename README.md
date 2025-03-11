@@ -55,11 +55,11 @@ Each instruction is 8 bits wide:
 
 ## Instruction Cycle
 Each instruction executes in up to 5 steps:
-1. **Fetch 1**: Load program counter to Memory Address Register
-2. **Fetch 2**: Load instruction from memory to Instruction Register
-3. **Execute 1**: Instruction-specific operation (often loading an address)
-4. **Execute 2**: Instruction-specific operation (often performing a data action)
-5. **Execute 3**: Instruction-specific operation (often completing an ALU operation)
+1. **Execute 1**: Instruction-specific operation (often loading an address)
+2. **Execute 2**: Instruction-specific operation (often performing a data action)
+3. **Execute 3**: Instruction-specific operation (often completing an ALU operation)
+4. **Fetch 1**: Load program counter to Memory Address Register
+5. **Fetch 2**: Load instruction from memory to Instruction Register
 
 ## Control Unit
 The control unit consists of:
