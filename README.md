@@ -23,8 +23,8 @@ This document details the architecture of a simple 8-bit CPU implementation with
 | 13       | HLT           | Halt - Stops the CPU clock |
 
 ## Instruction Set
-
-| Opcode | Mnemonic | Description | Step 0 (Fetch 1) | Step 1 (Fetch 2) | Step 2 | Step 3 | Step 4 |
+!! Outdated, moved fetch to end of instruction cycle. Need to update table. Not all opcodes implemented yet.
+| Opcode | Mnemonic | Description | Step 0 | Step 1 | Step 2 | Step 3 | Step 4 |
 |--------|----------|-------------|-----------------|-----------------|--------|--------|--------|
 | 0x0    | NOP      | No Operation | MI CE | MO II BI | - | - | - |
 | 0x1    | LDA      | Load from memory to A | MI CE | MO II BI | IO MI | MO AI | - |
