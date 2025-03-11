@@ -1,153 +1,102 @@
-# CPU Assembly Operations Reference
+# 8-bit CPU Architecture Documentation
 
-This document provides a comprehensive reference for the assembly operations of the custom CPU implemented in Digital.sh.
+## CPU Overview
+This document details the architecture of a simple 8-bit CPU implementation with a 4-bit address space, supporting 16 distinct instructions. The CPU features a microcoded control unit with a 5-step instruction cycle and various registers for data processing.
 
-## Control Signal Bit Positions
+## Control Signals
 
-Each control signal corresponds to a specific bit position in the control word:
+| Signal # | Control Signal | Function |
+|----------|---------------|----------|
+| 0        | J             | Jump - Controls program counter jumping |
+| 1        | CO            | Carry Out - Flag indicating a carry from arithmetic operation |
+| 2        | CE            | Clock Enable - Enables the system clock |
+| 3        | OI            | Output In - Loads data into the output register |
+| 4        | BI            | B register In - Loads data into the B register |
+| 5        | ΣS            | Sum Select - Selects operation for the ALU |
+| 6        | ΣO            | Sum Out - Enables the ALU output onto the bus |
+| 7        | AO            | A register Out - Outputs A register contents to the bus |
+| 8        | AI            | A register In - Loads data from the bus into the A register |
+| 9        | IO            | Instruction Out - Outputs instruction register contents to the bus |
+| 10       | II            | Instruction In - Loads data from the bus into the instruction register |
+| 11       | MO            | Memory Out - Enables the memory output to the bus |
+| 12       | MI            | Memory address In - Loads an address into the MAR |
+| 13       | HLT           | Halt - Stops the CPU clock |
 
-| Bit Position | Control Signal | Hex Value (when only this bit is set) | Description |
-|--------------|----------------|--------------------------------------|-------------|
-| 0 | HLT | 0x0001 | Halt the CPU |
-| 1 | MI | 0x0002 | Memory address register Input |
-| 2 | RO | 0x0004 | RAM Output |
-| 3 | II | 0x0008 | Instruction register Input |
-| 4 | IO | 0x0010 | Instruction register Output |
-| 5 | AI | 0x0020 | A register Input |
-| 6 | AO | 0x0040 | A register Output |
-| 7 | ΣO | 0x0080 | ALU (Sum) Output |
-| 8 | ΣS | 0x0100 | ALU (Sum) Subtract mode |
-| 9 | BI | 0x0200 | B register Input |
-| 10 | OI | 0x0400 | Output register Input |
-| 11 | CE | 0x0800 | Counter Enable |
-| 12 | CO | 0x1000 | Counter Output |
-| 13 | J | 0x2000 | Jump (program counter load) |
+## Instruction Set
 
-## Instruction Cycle Breakdown
+| Opcode | Mnemonic | Description | Step 0 (Fetch 1) | Step 1 (Fetch 2) | Step 2 | Step 3 | Step 4 |
+|--------|----------|-------------|-----------------|-----------------|--------|--------|--------|
+| 0x0    | NOP      | No Operation | MI CE | MO II BI | - | - | - |
+| 0x1    | LDA      | Load from memory to A | MI CE | MO II BI | IO MI | MO AI | - |
+| 0x2    | ADD      | Add memory to A | MI CE | MO II BI | IO MI | MO BI | ΣO AI |
+| 0x3    | OUT      | Output A register | MI CE | MO II BI | AO OI | - | - |
+| 0x4    | JMP      | Jump to address | MI CE | MO II BI | IO J | - | - |
+| 0x5    | STA      | Store A to memory | MI CE | MO II BI | IO MI | AO RI | - |
+| 0x6    | LDI      | Load immediate to A | MI CE | MO II BI | IO MI | MO AI | - |
+| 0x7    | JC       | Jump if carry | MI CE | MO II BI | IO J CO | - | - |
+| 0x8    | HLT      | Halt CPU | MI CE | MO II BI | HLT | - | - |
+| 0x9    | SUB      | Subtract memory from A | MI CE | MO II BI | IO MI | MO BI ΣS | ΣO AI |
+| 0xA    | AND      | Bitwise AND | MI CE | MO II BI | IO MI | MO BI | ΣO AI |
+| 0xB    | OR       | Bitwise OR | MI CE | MO II BI | IO MI | MO BI | ΣO AI |
+| 0xC    | XOR      | Bitwise XOR | MI CE | MO II BI | IO MI | MO BI | ΣO AI |
+| 0xD    | LDB      | Load from memory to B | MI CE | MO II BI | IO MI | MO BI | - |
+| 0xE    | STB      | Store B to memory | MI CE | MO II BI | IO MI | BO RI | - |
+| 0xF    | JNZ      | Jump if not zero | MI CE | MO II BI | IO J | - | HLT |
 
-### Fetch Cycle (Common to all instructions)
+## Instruction Format
+Each instruction is 8 bits wide:
+- The high 4 bits contain the opcode (0-15)
+- The low 4 bits contain the memory address (0-15)
 
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x00 | 0x1002 | CO, MI | Put PC onto address bus |
-| 0x01 | 0x0C04 | RO, II, CE | Read from memory to instruction register, increment PC |
+## Memory Architecture
+- Address Space: 16 locations (4-bit address)
+- Word Size: 8 bits
+- Memory is isolated from the main bus via a Memory Address Register (MAR)
 
-### Execute Cycles by Opcode
+## Instruction Cycle
+Each instruction executes in up to 5 steps:
+1. **Fetch 1**: Load program counter to Memory Address Register
+2. **Fetch 2**: Load instruction from memory to Instruction Register
+3. **Execute 1**: Instruction-specific operation (often loading an address)
+4. **Execute 2**: Instruction-specific operation (often performing a data action)
+5. **Execute 3**: Instruction-specific operation (often completing an ALU operation)
 
-#### NOP (No Operation - Opcode 0x0)
+## Control Unit
+The control unit consists of:
+- A 5-step counter
+- A control ROM containing microcode for each instruction
+- Logic to map instruction opcodes to appropriate microcode sequences
 
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x02 | 0x0000 | (none) | No operation, return to fetch cycle |
+## Control ROM Layout
+The control ROM is organized as an 8×8 grid (64 cells), with control signal patterns for each step of each instruction:
+- Each instruction requires 5 steps
+- Each step has a 14-bit control signal pattern
+- The opcode determines which 5-step sequence to execute
 
-#### LDA (Load A from memory - Opcode 0x1)
+## Sample Programs
 
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x0A | 0x0010 | IO | Put instruction operand on address bus |
-| 0x0B | 0x0006 | MI, RO | Load memory address from instruction |
-| 0x0C | 0x0024 | RO, AI | Load value from memory into A register |
-
-#### ADD (Add memory to A - Opcode 0x2)
-
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x12 | 0x0010 | IO | Put instruction operand on address bus |
-| 0x13 | 0x0206 | MI, RO, BI | Load memory address, prepare B register |
-| 0x14 | 0x00A0 | ΣO, AI | Add B to A, store in A |
-
-#### SUB (Subtract memory from A - Opcode 0x3)
-
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x1A | 0x0010 | IO | Put instruction operand on address bus |
-| 0x1B | 0x0206 | MI, RO, BI | Load memory address, prepare B register |
-| 0x1C | 0x01A0 | ΣO, ΣS, AI | Subtract B from A, store in A |
-
-#### STA (Store A to memory - Opcode 0x4)
-
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x22 | 0x0010 | IO | Put instruction operand on address bus |
-| 0x23 | 0x0002 | MI | Load memory address from instruction |
-| 0x24 | 0x0044 | RO, AO | Output A register to memory |
-
-#### JMP (Jump to address - Opcode 0x5)
-
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x2A | 0x0010 | IO | Put instruction operand on address bus |
-| 0x2B | 0x2000 | J | Jump to address (load PC) |
-
-#### JZ (Jump if Zero - Opcode 0x6)
-
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x32 | Conditional | (Conditional logic) | Jump if zero flag is set |
-
-#### OUT (Output A to output register - Opcode 0x7)
-
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x3A | 0x0440 | AO, OI | Output A register to output register |
-
-#### HLT (Halt the CPU - Opcode 0x8)
-
-| Address | Hex Value | Active Signals | Description |
-|---------|-----------|----------------|-------------|
-| 0x42 | 0x0001 | HLT | Halt the CPU |
-
-## Opcode Summary
-
-| Opcode | Instruction | Description |
-|--------|-------------|-------------|
-| 0x0 | NOP | No Operation |
-| 0x1 | LDA | Load A from memory |
-| 0x2 | ADD | Add memory to A |
-| 0x3 | SUB | Subtract memory from A |
-| 0x4 | STA | Store A to memory |
-| 0x5 | JMP | Jump to address |
-| 0x6 | JZ | Jump if Zero (if implemented) |
-| 0x7 | OUT | Output A to output register |
-| 0x8 | HLT | Halt the CPU |
-
-## Programming Examples
-
-### Example 1: Adding Two Numbers
-
-```assembly
-LDA 14    ; Load value from memory address 14
-ADD 15    ; Add value from memory address 15
-OUT       ; Output the result
-HLT       ; Halt the CPU
-
-; Data
-14: 5     ; First number (5)
-15: 10    ; Second number (10)
+### Simple Addition
+```
+0x18 ; LDA 8    - Load value from address 8 into A register
+0x29 ; ADD 9    - Add value from address 9 to A register
+0x30 ; OUT      - Output the result
+0x80 ; HLT      - Halt the CPU
+0x05 ; Data (5) - First operand at address 8
+0x03 ; Data (3) - Second operand at address 9
 ```
 
-### Example 2: Counting Loop
-
-```assembly
-LDA 20    ; Load counter value
-OUT       ; Display current count
-SUB 21    ; Decrement by 1
-STA 20    ; Store back to counter
-JZ 7      ; Jump to end if counter reaches 0
-JMP 1     ; Jump back to beginning of loop
-HLT       ; Halt when done
-
-; Data
-20: 5     ; Counter initial value
-21: 1     ; Decrement value
+### Memory Copy
+```
+0x18 ; LDA 8    - Load value from address 8 into A
+0x59 ; STA 9    - Store A to address 9
+0x80 ; HLT      - Halt the CPU
+0x00 ; ...      - (unused)
+0x42 ; Data     - Value at address 8 to be copied
+0x00 ; Target   - Will contain 0x42 after program runs
 ```
 
 ## Implementation Notes
-
-This CPU follows a simple fetch-decode-execute cycle with a control ROM driving all operations. The control ROM's contents define the microcode that implements each instruction.
-
-The CPU uses separate address spaces for instruction and data memory. The control signals coordinate data flow between various components including registers, ALU, and memory.
-
----
-
-*This reference is based on the analysis of the control ROM for a custom CPU implementation in Digital.sh.*
+- All jumps update the program counter immediately
+- The ALU operation (addition, subtraction, logic) is determined by the ΣS signal
+- The fetch cycle is common to all instructions
+- The B register is used for both instruction storage and arithmetic operations
