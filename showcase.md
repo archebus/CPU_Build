@@ -1,6 +1,6 @@
 # Control Logic
 
-![Control Logic and Clock](Images/control_logic.png)
+![Control Logic and Clock](Images/control.png)
 
 ## Overview
 The Control Logic orchestrates all CPU operations by generating control signals that coordinate component interactions based on the current instruction and execution step.
@@ -128,7 +128,7 @@ Allows the CPU to communicate output values to the user, providing real-time vis
 
 # Program Counter (PC)
 
-![Program Counter](Images/pc.png)
+![Program Counter](Images/program_counter.png)
 
 ## Overview
 The Program Counter keeps track of the current instruction address during program execution, automatically incrementing to step through program memory sequentially.
@@ -150,7 +150,7 @@ Acts as the instruction pointer for the CPU, determining which instruction is fe
 
 # Instruction Register (R:I)
 
-![Instruction Register](Images/instruction_register.png)
+![Instruction Register](Images/instruction_reg.png)
 
 ## Overview
 The Instruction Register stores the current instruction being executed by the CPU, separating the opcode from the address bits to control program flow.
@@ -173,7 +173,7 @@ Forms a critical part of the CPU's instruction cycle, holding the current instru
 
 # Memory and Memory Address Register (MAR)
 
-![Memory and MAR](Images/memory_mar.png)
+![Memory and MAR](Images/mar.png)
 
 ## Memory Address Register (MAR)
 
